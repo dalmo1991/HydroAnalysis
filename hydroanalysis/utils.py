@@ -1,29 +1,26 @@
 """
 Copyright 2021 Marco Dal Molin et al.
 
-This file is part of SuperflexPy.
+This file is part of HydroAnalysis.
 
-SuperflexPy is free software: you can redistribute it and/or modify
+HydroAnalysis is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-SuperflexPy is distributed in the hope that it will be useful,
+HydroAnalysis is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with SuperflexPy. If not, see <https://www.gnu.org/licenses/>.
+along with HydroAnalysis. If not, see <https://www.gnu.org/licenses/>.
 
-This file is part of the SuperflexPy modelling framework. For details about it,
-visit the page https://superflexpy.readthedocs.io
+This file is part of the HydroAnalysis modelling framework. For details about it,
+visit the page https://hydroanalysis.readthedocs.io/
 
 CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin
-
-This file contains the implementation of Element classes with different levels
-of specialization.
 """
 
 import numpy as np
@@ -34,10 +31,8 @@ def check_data(**kwargs):
     This function checks if all the input arguments:
     - are 1D np.ndarray
     - have the same shape
-    - there are good quality data
+    - there are data points with good quality code (0)
     """
-
-    current_length = None
 
     for k in kwargs:
         # Check if array
@@ -47,7 +42,6 @@ def check_data(**kwargs):
         if len(kwargs[k].shape) != 1:
             raise ValueError('{} must be 1D. Shape :  {}'.format(k, kwargs[k].shape))
 
-    # This is not efficient but in most of the cases we are dealing with a few arrays
     for k1 in kwargs:
         for k2 in kwargs:
             if k1 == k2:
@@ -86,16 +80,10 @@ def calculate_hydro_year(date, first_month = 10):
         Hydrological year time series
     """
 
-    hydrological_year = []
+    hydrological_year = date.year
+    hydrological_year[date.month >= first_month] = date.year[date.month >= first_month] + 1
 
-    # TODO: this can probably be done better with pandas
-    for el in date:
-        if el.month in range(first_month, 13):
-            hydrological_year.append(el.year + 1)
-        else:
-            hydrological_year.append(el.year)
-
-    return np.array(hydrological_year)
+    return hydrological_year.values
 
 def calculate_season(date, mapping = None):
     """
@@ -132,9 +120,6 @@ def calculate_season(date, mapping = None):
                 12 : 'Winter'
             }
 
-    # TODO: this can probably be done better with pandas
-    season = []
-    for el in date:
-        season.append(mapping[el.month])
+    season = date.month.map(mapping).values
 
     return np.array(season)
