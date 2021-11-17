@@ -1,20 +1,8 @@
 """
-This file contains the python code to calculate the hydrological signatures
-presented in table 3 of Addor et al. (2017).
-
-This code represent the translation of the R code "hydro_signatures.R"
-hosted on Github in the "camels" repository of "naddor".
-
-References
-Addor, N., Newman, A. J., Mizukami, N., and Clark, M. P.: The CAMELS data set:
-catchment attributes and meteorology for large-sample studies, Hydrol. Earth
-Syst. Sci., 21, 5293-5313, https://doi.org/10.5194/hess-21-5293-2017, 2017.
-
-https://github.com/naddor/camels/blob/master/hydro/hydro_signatures.R
-
 Copyright 2021 Marco Dal Molin et al.
 
-This file is part of HydroAnalysis.
+This file is part of the HydroAnalysis modelling framework. For details about
+it, visit the page https://hydroanalysis.readthedocs.io/
 
 HydroAnalysis is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -29,12 +17,25 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with HydroAnalysis. If not, see <https://www.gnu.org/licenses/>.
 
-This file is part of the HydroAnalysis modelling framework. For details about it,
-visit the page https://hydroanalysis.readthedocs.io/
-
 CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin
+
+********************************************************************************
+
+This file contains the python code to calculate the hydrological signatures
+presented in table 3 of Addor et al. (2017).
+
+This code represent the translation of the R code "hydro_signatures.R"
+hosted on Github in the "camels" repository of "naddor".
+
+References
+Addor, N., Newman, A. J., Mizukami, N., and Clark, M. P.: The CAMELS data set:
+catchment attributes and meteorology for large-sample studies, Hydrol. Earth
+Syst. Sci., 21, 5293-5313, https://doi.org/10.5194/hess-21-5293-2017, 2017.
+
+https://github.com/naddor/camels/blob/master/hydro/hydro_signatures.R
 """
+
 
 from .utils import check_data, calculate_hydro_year, calculate_season
 
