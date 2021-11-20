@@ -1,6 +1,6 @@
 # HydroAnalysis
 
-HydroAnalysis is a Python package to calculate indices and metrics useful in the everyday job of an hydrologist.
+[HydroAnalysis](https://pypi.org/project/hydroanalysis/) is a Python package to calculate indices and metrics useful in the everyday job of an hydrologist.
 
 The package is the result of the re-organization of code that I have used during my research and that I have decided to publish because of its supposed usefulness.
 
