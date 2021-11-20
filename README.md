@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/406317261.svg)](https://zenodo.org/badge/latestdoi/406317261)
+
 # HydroAnalysis
 
 [HydroAnalysis](https://pypi.org/project/hydroanalysis/) is a Python package to calculate indices and metrics useful in the everyday job of an hydrologist.
