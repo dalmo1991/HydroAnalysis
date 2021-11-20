@@ -41,6 +41,7 @@ from .utils import check_data
 import pandas as pd
 import numpy as np
 
+
 def calculate_q_mean(streamflow, quality):
     """
     This function calculates the signature "mean daily discharge".
@@ -72,6 +73,7 @@ def calculate_q_mean(streamflow, quality):
     sig = streamflow[quality == 0].mean()
 
     return float(sig)
+
 
 def calculate_runoff_ratio(streamflow, quality, precipitation):
     """
@@ -109,6 +111,7 @@ def calculate_runoff_ratio(streamflow, quality, precipitation):
 
     return float(sig)
 
+
 def calculate_stream_elas(streamflow, quality, precipitation, hydro_year):
     """
     This function calculates the signature "stream_elas". Note that the analysis
@@ -141,18 +144,18 @@ def calculate_stream_elas(streamflow, quality, precipitation, hydro_year):
                                Sankarasubramanian et al., 2001, WRR
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality,
-                        precipitation = precipitation,
-                        hydro_year = hydro_year)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality,
+                                   precipitation=precipitation,
+                                   hydro_year=hydro_year)
 
     if not good_quality_data:
         return None
 
     # Construct a pandas DataFrame to filter
-    data = pd.DataFrame(data = np.array([streamflow, quality, precipitation]).transpose(),
-                        index = hydro_year,
-                        columns = ['Q', 'QC', 'P'])
+    data = pd.DataFrame(data=np.array([streamflow, quality, precipitation]).transpose(),
+                        index=hydro_year,
+                        columns=['Q', 'QC', 'P'])
 
     # Take care of the quality code
     data = data[data['QC'] == 0]
@@ -165,16 +168,19 @@ def calculate_stream_elas(streamflow, quality, precipitation, hydro_year):
 
     # Anomaly computed with respect to previous year (Sawicz et al., 2011, HESS)
     diff_prev_year = mean_year.diff()
-    e_sawicz =  ((diff_prev_year['Q']/mean_tot['Q'])/(diff_prev_year['P']/mean_tot['P'])).median()
+    e_sawicz = ((diff_prev_year['Q']/mean_tot['Q']) /
+                (diff_prev_year['P']/mean_tot['P'])).median()
 
     # Anomaly computed with respect to long-term mean (Sankarasubramanian et al., 2001, WRR)
     diff_mean = mean_year - mean_tot
-    e_sanka = ((diff_mean['Q']/mean_tot['Q'])/(diff_mean['P']/mean_tot['P'])).median()
+    e_sanka = ((diff_mean['Q']/mean_tot['Q']) /
+               (diff_mean['P']/mean_tot['P'])).median()
 
-    sig = {'Sawicz' : float(e_sawicz),
-           'Sankarasubramanian' : float(e_sanka)}
+    sig = {'Sawicz': float(e_sawicz),
+           'Sankarasubramanian': float(e_sanka)}
 
     return sig
+
 
 def calculate_slope_fdc(streamflow, quality):
     """
@@ -199,13 +205,13 @@ def calculate_slope_fdc(streamflow, quality):
         'Addor' : Signature calculated according to Addor et al 2017
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
 
-    quantiles = np.arange(start = 0, stop = 1.001, step = 0.001)*100
+    quantiles = np.arange(start=0, stop=1.001, step=0.001)*100
     fdc = -np.sort(-np.percentile(streamflow[quality == 0], quantiles))
     q33 = fdc[quantiles == 33.0]
     q66 = fdc[quantiles == 66.0]
@@ -216,23 +222,26 @@ def calculate_slope_fdc(streamflow, quality):
     if (q66 != 0) and (not np.isnan(q66)):
         slope_sawicz = float((np.log(q33) - np.log(q66))/(0.66 - 0.33))
         slope_yadav = float(((q33/q_mean) - (q66/q_mean))/(0.66 - 0.33))
-        slope_mcmillan = float((np.log(q33/q_median) - np.log(q66/q_median))/(0.66 - 0.33))
+        slope_mcmillan = float(
+            (np.log(q33/q_median) - np.log(q66/q_median))/(0.66 - 0.33))
         q33_perc, q66_perc = np.percentile(streamflow[quality == 0], [33, 66])
-        slope_addor = float((np.log(q66_perc) - np.log(q33_perc))/(0.66 - 0.33))
+        slope_addor = float(
+            (np.log(q66_perc) - np.log(q33_perc))/(0.66 - 0.33))
     else:
         slope_sawicz = None
         slope_yadav = None
         slope_mcmillan = None
         slope_addor = None
 
-    sig = {'Sawicz' : slope_sawicz,
-           'Yadav' : slope_yadav,
-           'McMillan' : slope_mcmillan,
-           'Addor' : slope_addor}
+    sig = {'Sawicz': slope_sawicz,
+           'Yadav': slope_yadav,
+           'McMillan': slope_mcmillan,
+           'Addor': slope_addor}
 
     return sig
 
-def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3, num_reflect = 30, returnBF = False):
+
+def calculate_baseflow_index(streamflow, quality, alpha=0.925, num_filters=3, num_reflect=30, returnBF=False):
     """
     This function calculates the signature "baseflow_index". It follows the
     implementation from Ladson et al., 2013.
@@ -301,18 +310,23 @@ def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3
 
         # Find the sequences of homogeneous values (https://stackoverflow.com/questions/1066758/find-length-of-sequences-of-identical-values-in-a-numpy-array-run-length-encodi)
         n = len(quality)
-        y = np.array(quality[1:] != quality[:-1])     # pairwise unequal (string safe)
-        i = np.append(np.where(y), n - 1)             # must include last element posi
+        # pairwise unequal (string safe)
+        y = np.array(quality[1:] != quality[:-1])
+        # must include last element posi
+        i = np.append(np.where(y), n - 1)
         lengths = np.diff(np.append(-1, i))           # run lengths
-        values = quality[i] == 0                      # True means we have the data
+        # True means we have the data
+        values = quality[i] == 0
 
         # Check if we have enough data
         if not np.logical_and(values, lengths > num_reflect).any():
-            raise ValueError('Must have at least {} consecutive valid values'.format(num_reflect))
+            raise ValueError(
+                'Must have at least {} consecutive valid values'.format(num_reflect))
 
         # Find the end of the sequence of valid data
         index = np.where(np.logical_and(values, lengths > num_reflect))[0]
-        ends = np.cumsum(lengths)[index] # It is plus +1 becouse when I do [:end] I don't take the last value
+        # It is plus +1 becouse when I do [:end] I don't take the last value
+        ends = np.cumsum(lengths)[index]
 
         # Find the starts
         new_index = index[np.where(index != 0)[0]]-1
@@ -328,11 +342,12 @@ def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3
         q_reflect = np.zeros(2*num_reflect + len(streamflow))
         q_reflect[:num_reflect] = np.flip(streamflow[:num_reflect])
         q_reflect[num_reflect:len(q_reflect)-num_reflect] = streamflow
-        q_reflect[len(q_reflect)-num_reflect:] = np.flip(streamflow[len(streamflow)-num_reflect:])
+        q_reflect[len(
+            q_reflect)-num_reflect:] = np.flip(streamflow[len(streamflow)-num_reflect:])
 
         # Run the filters
         for i in range(num_filters):
-            if i%2 == 0:  # Forward filter
+            if i % 2 == 0:  # Forward filter
                 if i == 0:  # The input is q_reflect
                     qf, qb = forward_pass(q_reflect, alpha)
                 else:  # The input is qb
@@ -346,8 +361,8 @@ def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3
 
         return (qf, qb)
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
@@ -359,13 +374,17 @@ def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3
     if not isinstance(num_reflect, int):
         raise TypeError('num_reflect is of type {}'.format(type(num_reflect)))
     if (alpha < 0) or (alpha > 1):
-        raise ValueError('alpha must be between 0 and 1. alpha = {}'.format(alpha))
-    if (num_filters <= 0) or (num_filters%2 == 0):
-        raise ValueError('num_filters must be positive and odd. num_filters = {}'.format(num_filters))
+        raise ValueError(
+            'alpha must be between 0 and 1. alpha = {}'.format(alpha))
+    if (num_filters <= 0) or (num_filters % 2 == 0):
+        raise ValueError(
+            'num_filters must be positive and odd. num_filters = {}'.format(num_filters))
     if num_reflect < 0:
-        raise ValueError('num_reflect must be positive. num_reflect = {}'.format(num_reflect))
+        raise ValueError(
+            'num_reflect must be positive. num_reflect = {}'.format(num_reflect))
     if len(streamflow) < num_reflect:
-        raise ValueError('the time series must be longer than num_reflect. {} vs {}'.format(len(streamflow), num_reflect))
+        raise ValueError('the time series must be longer than num_reflect. {} vs {}'.format(
+            len(streamflow), num_reflect))
     if not isinstance(returnBF, bool):
         raise TypeError('returnBF is of type {}'.format(type(returnBF)))
 
@@ -383,12 +402,13 @@ def calculate_baseflow_index(streamflow, quality, alpha = 0.925, num_filters = 3
             w.append(len(chopped))
 
         # Calculate the weighted average
-        sig = np.average(a = bfi, weights = w)
+        sig = np.average(a=bfi, weights=w)
 
     if returnBF and np.max(quality) == 0:
         return (float(sig), qb)
     else:
         return float(sig)
+
 
 def calculate_hfd_mean(streamflow, quality, hydro_year):
     """
@@ -415,9 +435,9 @@ def calculate_hfd_mean(streamflow, quality, hydro_year):
         'hfd_std' : standard deviation of the annual signature
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality,
-                        hydro_year = hydro_year)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality,
+                                   hydro_year=hydro_year)
 
     if not good_quality_data:
         return None
@@ -428,12 +448,13 @@ def calculate_hfd_mean(streamflow, quality, hydro_year):
         if len(x) < 360:
             return np.nan
         else:
-            return sum(x.cumsum() < 0.5*x.sum()) + 1 # The +1 is needed to get the same definition of Addor
+            # The +1 is needed to get the same definition of Addor
+            return sum(x.cumsum() < 0.5*x.sum()) + 1
 
     # Construct a pandas DataFrame to filter
-    data = pd.DataFrame(data = np.array([streamflow, quality]).transpose(),
-                        index = hydro_year,
-                        columns = ['Q', 'QC'])
+    data = pd.DataFrame(data=np.array([streamflow, quality]).transpose(),
+                        index=hydro_year,
+                        columns=['Q', 'QC'])
 
     data = data[data['QC'] == 0]
 
@@ -444,10 +465,11 @@ def calculate_hfd_mean(streamflow, quality, hydro_year):
     hfd_mean = float(hfd.mean())
     hfd_std = float(hfd.std())
 
-    sig = {'hfd_mean' : hfd_mean,
-           'hfd_std' : hfd_std}
+    sig = {'hfd_mean': hfd_mean,
+           'hfd_std': hfd_std}
 
     return sig
+
 
 def calculate_percentile(streamflow, quality, percentile):
     """
@@ -471,8 +493,8 @@ def calculate_percentile(streamflow, quality, percentile):
         Value of the signature.
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
@@ -480,6 +502,7 @@ def calculate_percentile(streamflow, quality, percentile):
     sig = np.percentile(streamflow[quality == 0], percentile)
 
     return float(sig)
+
 
 def calculate_q_5(streamflow, quality):
     """
@@ -505,6 +528,7 @@ def calculate_q_5(streamflow, quality):
                                 quality=quality,
                                 percentile=5)
 
+
 def calculate_q_95(streamflow, quality):
     """
     This function calculates the signature "q_95".
@@ -529,6 +553,7 @@ def calculate_q_95(streamflow, quality):
                                 quality=quality,
                                 percentile=95)
 
+
 def calculate_high_q_freq_dur(streamflow, quality):
     """
     This function calculates the signatures "high_q_freq" and "high_q_dur".
@@ -550,8 +575,8 @@ def calculate_high_q_freq_dur(streamflow, quality):
         'hq_dur' : Mean high flow duration
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
@@ -560,7 +585,8 @@ def calculate_high_q_freq_dur(streamflow, quality):
     hf = streamflow[quality == 0] > 9*np.median(streamflow[quality == 0])
 
     if any(hf):
-        seq = [x[x!=0] for x in np.split(hf, np.where(hf==0)[0]) if len(x[x!=0])]
+        seq = [x[x != 0]
+               for x in np.split(hf, np.where(hf == 0)[0]) if len(x[x != 0])]
         dur = np.mean([len(x) for x in seq])
         freq = (hf.sum()/len(streamflow[quality == 0]))*365.25
         freq = float(freq)
@@ -569,10 +595,11 @@ def calculate_high_q_freq_dur(streamflow, quality):
         freq = None
         dur = None
 
-    sig = {'hq_freq' : freq,
-           'hq_dur' : dur}
+    sig = {'hq_freq': freq,
+           'hq_dur': dur}
 
     return sig
+
 
 def calculate_low_q_freq_dur(streamflow, quality):
     """
@@ -595,8 +622,8 @@ def calculate_low_q_freq_dur(streamflow, quality):
         'lq_dur' : Mean low flow duration
     """
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
@@ -605,7 +632,8 @@ def calculate_low_q_freq_dur(streamflow, quality):
     lf = streamflow[quality == 0] <= 0.2*streamflow[quality == 0].mean()
 
     if any(lf):
-        seq = [x[x!=0] for x in np.split(lf, np.where(lf==0)[0]) if len(x[x!=0])]
+        seq = [x[x != 0]
+               for x in np.split(lf, np.where(lf == 0)[0]) if len(x[x != 0])]
         dur = np.mean([len(x) for x in seq])
         freq = (lf.sum()/len(streamflow[quality == 0]))*365.25
         freq = float(freq)
@@ -614,10 +642,11 @@ def calculate_low_q_freq_dur(streamflow, quality):
         freq = None
         dur = None
 
-    sig = {'lq_freq' : freq,
-           'lq_dur' : dur}
+    sig = {'lq_freq': freq,
+           'lq_dur': dur}
 
     return sig
+
 
 def calculate_zero_q_freq(streamflow, quality):
     """
@@ -640,13 +669,14 @@ def calculate_zero_q_freq(streamflow, quality):
     """
     # Function not implemented by Addor. Doing my version
 
-    good_quality_data = check_data(streamflow = streamflow,
-                        quality = quality)
+    good_quality_data = check_data(streamflow=streamflow,
+                                   quality=quality)
 
     if not good_quality_data:
         return None
 
     filtered_streamflow = streamflow[quality == 0]
-    sig = len(filtered_streamflow[filtered_streamflow == 0])/len(streamflow[quality == 0])
+    sig = len(
+        filtered_streamflow[filtered_streamflow == 0])/len(streamflow[quality == 0])
 
     return float(sig)
