@@ -18,8 +18,8 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Hydrology',
     ],
     install_requires=[
-        'numpy>=1.20.*',
-        'pandas>=1.2.*',
-        'scipy>=1.6.*',
+        'numpy>=1.20.0',
+        'pandas>=1.2.0',
+        'scipy>=1.6.0',
     ],
 )
