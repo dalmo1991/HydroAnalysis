@@ -216,7 +216,7 @@ def calculate_p_seasonality(precipitation, quality, date, temperature):
     delta_t = temp_pars.x[0]
     st = temp_pars.x[1]
 
-    sig = delta_p * np.sign(delta_t) * np.cos(2 * np.pi * (sp - st / 365.25))
+    sig = delta_p * np.sign(delta_t) * np.cos(2 * np.pi * (sp - st) / 365.25)
 
     return(float(sig))
 
