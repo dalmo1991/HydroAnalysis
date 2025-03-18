@@ -3,7 +3,7 @@ import os
 
 setuptools.setup(
     name='hydroanalysis',
-    version='1.0.0',
+    version='1.0.1',
     author='Marco Dal Molin',
     author_email='marco.dalmolin.1991@gmail.com',
     description='Framework for calculating hydrological indices',
