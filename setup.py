@@ -3,7 +3,7 @@ import os
 
 setuptools.setup(
     name='hydroanalysis',
-    version='1.0.0',
+    version='1.0.1',
     author='Marco Dal Molin',
     author_email='marco.dalmolin.1991@gmail.com',
     description='Framework for calculating hydrological indices',
@@ -18,8 +18,8 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Hydrology',
     ],
     install_requires=[
-        'numpy>=1.20.*',
-        'pandas>=1.2.*',
-        'scipy>=1.6.*',
+        'numpy>=1.20.0',
+        'pandas>=1.2.0',
+        'scipy>=1.6.0',
     ],
 )
